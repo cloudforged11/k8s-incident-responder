@@ -1,0 +1,21 @@
+{
+  "version": "4",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "HighMemoryUsage",
+        "severity": "warning",
+        "namespace": "production",
+        "pod": "order-service-5f8a9b2c1-m7n3p",
+        "container": "order-api"
+      },
+      "annotations": {
+        "summary": "High memory usage detected",
+        "description": "Container order-api in pod order-service-5f8a9b2c1-m7n3p is using 95% of its memory limit (486Mi/512Mi). OOMKill imminent."
+      },
+      "startsAt": "2026-08-01T14:30:00Z"
+    }
+  ]
+}

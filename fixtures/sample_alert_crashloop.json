@@ -1,0 +1,21 @@
+{
+  "version": "4",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "KubePodCrashLooping",
+        "severity": "critical",
+        "namespace": "production",
+        "pod": "payment-service-7d4b8c6f9-x2k4m",
+        "container": "payment-api"
+      },
+      "annotations": {
+        "summary": "Pod is crash looping",
+        "description": "Pod production/payment-service-7d4b8c6f9-x2k4m (payment-api) is in a CrashLoopBackOff state. It has restarted 5 times in the last 10 minutes."
+      },
+      "startsAt": "2026-08-01T10:05:00Z"
+    }
+  ]
+}
