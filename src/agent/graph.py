@@ -31,7 +31,7 @@ from typing import Annotated, TypedDict
 
 import structlog
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from langgraph.graph import END, StateGraph
 from langgraph.graph.message import add_messages
 
@@ -71,14 +71,14 @@ class IncidentAgent:
 
     def __init__(
         self,
-        google_api_key: str,
-        model: str = "gemini-2.0-flash",
+        groq_api_key: str,
+        model: str = "llama-3.3-70b-versatile",
         log_collector: K8sLogCollector | None = None,
         slack_notifier: SlackNotifier | None = None,
     ):
-        self.llm = ChatGoogleGenerativeAI(
+        self.llm = ChatGroq(
             model=model,
-            google_api_key=google_api_key,
+            api_key=groq_api_key,
             temperature=0.1,
         )
         self.log_collector = log_collector or K8sLogCollector()

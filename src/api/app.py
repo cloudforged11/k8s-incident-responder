@@ -7,8 +7,9 @@ from datetime import datetime
 
 import structlog
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from src.agent.graph import IncidentAgent
 from src.collectors.k8s_logs import K8sLogCollector
@@ -42,15 +43,15 @@ async def lifespan(app: FastAPI):
     await db.init()
 
     # Initialize agent
-    google_key = os.getenv("GOOGLE_API_KEY", "")
-    model = os.getenv("LLM_MODEL", "gemini-2.0-flash")
+    groq_key = os.getenv("GROQ_API_KEY", "")
+    model = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
     slack_url = os.getenv("SLACK_WEBHOOK_URL", "")
 
     log_collector = K8sLogCollector(live_mode=bool(os.getenv("KUBECONFIG")))
     slack_notifier = SlackNotifier(slack_url) if slack_url else None
 
     agent = IncidentAgent(
-        google_api_key=google_key,
+        groq_api_key=groq_key,
         model=model,
         log_collector=log_collector,
         slack_notifier=slack_notifier,
@@ -75,6 +76,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Catch all unhandled exceptions and return useful error info."""
+    logger.error("unhandled_exception", error=str(exc), path=request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal error: {str(exc)}"},
+    )
 
 
 @app.get("/health")
@@ -121,20 +132,24 @@ async def analyze_alert(alert: PrometheusAlert):
     if not agent or not db:
         raise HTTPException(status_code=503, detail="Service not ready")
 
-    incident = await agent.analyze_incident(alert)
-    await db.save_incident(incident)
+    try:
+        incident = await agent.analyze_incident(alert)
+        await db.save_incident(incident)
 
-    return IncidentResponse(
-        id=incident.id,
-        status=incident.status,
-        alert_name=incident.alert.alert_name,
-        severity=incident.analysis.severity if incident.analysis else Severity.WARNING,
-        namespace=incident.alert.namespace,
-        root_cause=incident.analysis.root_cause if incident.analysis else None,
-        confidence=incident.analysis.confidence if incident.analysis else None,
-        remediation_steps=incident.analysis.remediation_steps if incident.analysis else [],
-        created_at=incident.created_at,
-    )
+        return IncidentResponse(
+            id=incident.id,
+            status=incident.status,
+            alert_name=incident.alert.alert_name,
+            severity=incident.analysis.severity if incident.analysis else Severity.WARNING,
+            namespace=incident.alert.namespace,
+            root_cause=incident.analysis.root_cause if incident.analysis else None,
+            confidence=incident.analysis.confidence if incident.analysis else None,
+            remediation_steps=incident.analysis.remediation_steps if incident.analysis else [],
+            created_at=incident.created_at,
+        )
+    except Exception as e:
+        logger.error("api.analyze_failed", error=str(e), alert=alert.alert_name)
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 
 
 @app.get("/api/v1/incidents", response_model=list[IncidentResponse])

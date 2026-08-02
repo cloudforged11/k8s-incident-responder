@@ -66,7 +66,7 @@ Each node in the graph performs a specialized task:
 
 ### Prerequisites
 - Python 3.11+
-- Google Gemini API key (FREE - [get one here](https://aistudio.google.com/apikey))
+- Groq API key (FREE - [get one here](https://console.groq.com/keys))
 
 ### 1. Clone & Setup
 
@@ -84,7 +84,7 @@ pip install -e .
 
 ```bash
 cp .env.example .env
-# Edit .env → set GOOGLE_API_KEY=your-key-from-aistudio.google.com
+# Edit .env → set GROQ_API_KEY=your-key-from-console.groq.com
 ```
 
 ### 3. Run
@@ -143,7 +143,7 @@ docker build -t k8s-incident-responder:latest .
 
 # Install with Helm
 helm install incident-responder ./helm/k8s-incident-responder \
-  --set env.GOOGLE_API_KEY=your-key-here \
+  --set env.GROQ_API_KEY=your-key-here \
   --set env.SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
 ```
 
@@ -205,7 +205,7 @@ k8s-incident-responder/
 
 | Layer | Technology |
 |-------|-----------|
-| AI/Reasoning | LangGraph, LangChain, Google Gemini (free tier) |
+| AI/Reasoning | LangGraph, LangChain, Groq (Llama 3.3 70B - free tier) |
 | API | FastAPI, Pydantic v2 |
 | Database | SQLAlchemy (async), SQLite |
 | Container | Docker, Helm 3 |

@@ -9,3 +9,4 @@ incidents.db
 venv/
 .ruff_cache/
 .pytest_cache/
+server.log
