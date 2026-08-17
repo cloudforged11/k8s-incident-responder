@@ -97,6 +97,8 @@ python main.py
 
 Server starts at `http://localhost:8000`. API docs at `http://localhost:8000/docs`.
 
+> 💡 **Don't want to set up locally?** Try the live demo: [https://k8s-incident-responder.onrender.com/docs](https://k8s-incident-responder.onrender.com/docs)
+
 ### 4. Test with a sample alert
 
 ```bash
