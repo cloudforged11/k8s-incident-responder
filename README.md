@@ -2,6 +2,8 @@
 
 **AI-powered Kubernetes incident analysis using LangGraph for automated root cause detection and remediation suggestions.**
 
+🔗 **Live Demo:** [https://k8s-incident-responder.onrender.com/docs](https://k8s-incident-responder.onrender.com/docs)
+
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com)
 [![LangGraph](https://img.shields.io/badge/LangGraph-0.2-purple.svg)](https://github.com/langchain-ai/langgraph)
